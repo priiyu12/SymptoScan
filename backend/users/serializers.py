@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreatePasswordRetypeSerializer
 from .models import Doctor
 
+
 User = get_user_model()
 
 class DoctorSerializer(serializers.ModelSerializer):

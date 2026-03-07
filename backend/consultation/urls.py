@@ -8,6 +8,7 @@ from .views import (
     get_payment_history
 )
 
+
 urlpatterns = [
     path('request/', create_consultation, name='create-consultation'),
     path('verify/', verify_payment, name='verify-payment'),

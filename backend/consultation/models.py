@@ -17,6 +17,7 @@ class Consultation(models.Model):
         ('CANCELLED', 'Cancelled'),
     )
 
+
     # User relationships
     patient = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="consultations", on_delete=models.CASCADE)
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="doctor_consultations", on_delete=models.CASCADE)
@@ -51,6 +52,7 @@ class Consultation(models.Model):
             # When created, it expires 30 days from now
             self.expires_at = timezone.now() + timedelta(days=30)
         super().save(*args, **kwargs)
+
 
 
 class ChatMessage(models.Model):
