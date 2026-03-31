@@ -1,0 +1,10 @@
+Django>=4.2
+djangorestframework
+django-cors-headers
+djoser
+djangorestframework-simplejwt
+psycopg2-binary
+pandas
+numpy
+scikit-learn
+joblib

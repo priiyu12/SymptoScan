@@ -1,0 +1,8 @@
+# Register your models here.
+from django.contrib import admin
+from .models import PredictionHistory
+from .models import ChatRoom, Message
+
+admin.site.register(PredictionHistory)
+admin.site.register(ChatRoom)
+admin.site.register(Message)
