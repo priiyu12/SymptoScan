@@ -1,17 +1,11 @@
-# SymptoScan
 
-SymptoScan is an online AI-based disease prediction and consultation platform.
+  # SymptoScan Healthcare Web App
 
-## Team Members
-- 202512100 – Priii → Frontend + ML
-- 202512105 – Priya D → Backend
-- 202512059 – Jay → Frontend
-- 202512012 – Jainam → Backend
+  This is a code bundle for SymptoScan Healthcare Web App. The original project is available at https://www.figma.com/design/oT8rmi4vNhGigtf6flR0rk/SymptoScan-Healthcare-Web-App.
 
-## Main Stack
-- Frontend: React
-- Backend: Django + Django REST Framework
-- Database: PostgreSQL
-- ML: Scikit-learn
-- Auth: JWT
-- Deployment: Railway
+  ## Running the code
+
+  Run `npm i` to install the dependencies.
+
+  Run `npm run dev` to start the development server.
+  
