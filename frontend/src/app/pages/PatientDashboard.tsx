@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../utils/api';
 
-
 export default function PatientDashboard() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -268,7 +267,7 @@ export default function PatientDashboard() {
         {activeConsultations.length > 0 && (
           <Card className="p-6 mt-6 shadow-md border-0 bg-blue-50/50">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Active Consultations</h2>
+              <h2 className="text-xl font-semibold text-gray-900"><Active></Active> Consultations</h2>
             </div>
             <div className="space-y-4">
               {activeConsultations.map((consultation, index) => (
@@ -342,7 +341,7 @@ export default function PatientDashboard() {
           </Card>
         )}
 
-        {/* Health Tips */}
+        {/*Health Tips*/}
         <Card className="p-6 mt-6 bg-gradient-to-br from-blue-50 to-green-50 border-0 shadow-md">
           <h3 className="font-semibold text-gray-900 mb-3">💡 Health Tip of the Day</h3>
           <p className="text-gray-600 text-sm">
