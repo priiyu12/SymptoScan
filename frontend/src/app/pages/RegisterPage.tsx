@@ -8,6 +8,7 @@ import { Card } from '../components/ui/card';
 import { Activity } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 export default function RegisterPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -47,7 +48,7 @@ export default function RegisterPage() {
         payload.consultation_fee = parseFloat(formData.consultation_fee);
       }
 
-      await axios.post(' + API_BASE_URL + "/api/auth/users/', payload);
+      await axios.post(`${API_BASE_URL}/api/auth/users/`, payload);
       alert('Account created successfully! Please sign in.');
       navigate('/login');
     } catch (err: any) {

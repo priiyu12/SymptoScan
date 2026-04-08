@@ -8,6 +8,7 @@ import { Card } from '../components/ui/card';
 import { Activity } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 export default function LoginPage() {
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<'patient' | 'doctor' | 'admin'>('patient');
@@ -24,14 +25,14 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await axios.post(' + API_BASE_URL + "/api/auth/jwt/create/', {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/jwt/create/`, {
         email,
         password
       });
 
       const { access, refresh } = response.data;
 
-      const userRes = await axios.get(' + API_BASE_URL + "/api/auth/users/me/', {
+      const userRes = await axios.get(`${API_BASE_URL}/api/auth/users/me/`, {
         headers: {
           Authorization: `Bearer ${access}`
         }

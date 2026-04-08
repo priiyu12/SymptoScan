@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Badge } from '../components/ui/badge';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 export default function ChatConsultationPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,7 +59,7 @@ export default function ChatConsultationPage() {
 
     try {
       const token = localStorage.getItem('access_token');
-      await axios.post(' + API_BASE_URL + "/api/consultation/chat/send/', {
+      await axios.post(`${API_BASE_URL}/api/consultation/chat/send/`, {
         consultation_id: consultationId,
         content: newMessage
       }, {

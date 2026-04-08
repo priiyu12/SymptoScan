@@ -6,6 +6,7 @@ import { Badge } from '../components/ui/badge';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 export default function PatientDashboard() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -32,13 +33,13 @@ export default function PatientDashboard() {
         const token = localStorage.getItem('access_token');
 
         // Fetch user info
-        const userRes = await axios.get(' + API_BASE_URL + "/api/auth/users/me/', {
+        const userRes = await axios.get(`${API_BASE_URL}/api/auth/users/me/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserName(userRes.data.full_name || userRes.data.email.split('@')[0]);
 
         // Fetch prediction history
-        const historyRes = await axios.get(' + API_BASE_URL + "/api/prediction/history/', {
+        const historyRes = await axios.get(`${API_BASE_URL}/api/prediction/history/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPredictions(historyRes.data.history || []);

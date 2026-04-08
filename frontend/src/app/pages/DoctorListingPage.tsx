@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 export default function DoctorListingPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,7 +21,7 @@ export default function DoctorListingPage() {
     const fetchDoctors = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await axios.get(' + API_BASE_URL + "/api/users/doctors/', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/doctors/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -60,7 +61,7 @@ export default function DoctorListingPage() {
     try {
       const token = localStorage.getItem('access_token');
       
-      const res = await axios.post(' + API_BASE_URL + "/api/consultation/request/', {
+      const res = await axios.post(`${API_BASE_URL}/api/consultation/request/`, {
         doctor_id: doctor.id
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -70,7 +71,7 @@ export default function DoctorListingPage() {
 
       const completePayment = async (razorpay_payment_id: string, razorpay_signature: string) => {
         try {
-          const verifyRes = await axios.post(' + API_BASE_URL + "/api/consultation/verify/', {
+          const verifyRes = await axios.post(`${API_BASE_URL}/api/consultation/verify/`, {
             consultation_id,
             razorpay_order_id,
             razorpay_payment_id,
