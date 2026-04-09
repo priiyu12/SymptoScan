@@ -7,8 +7,9 @@ import { Activity, Send, ArrowLeft, User, LogOut, Phone, Video, MoreVertical, Pa
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Badge } from '../components/ui/badge';
 import axios from 'axios';
+import { API_BASE_URL } from '../utils/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
 export default function ChatConsultationPage() {
   const navigate = useNavigate();
   const location = useLocation();

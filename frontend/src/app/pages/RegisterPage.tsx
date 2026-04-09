@@ -7,8 +7,9 @@ import { Label } from '../components/ui/label';
 import { Card } from '../components/ui/card';
 import { Activity } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { API_BASE_URL } from '../utils/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
 export default function RegisterPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

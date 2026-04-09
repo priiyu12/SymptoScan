@@ -6,8 +6,9 @@ import { Badge } from '../components/ui/badge';
 import { useState, useEffect } from 'react';
 import { Switch } from '../components/ui/switch';
 import axios from 'axios';
+import { API_BASE_URL } from '../utils/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
 export default function DoctorDashboard() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);

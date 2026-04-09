@@ -40,7 +40,13 @@ def reseed():
     doctors = []
     for email, name, spec, exp, fee in doctors_data:
         u = User.objects.create_user(email, name, 'doctor123', role='doctor')
-        d = Doctor.objects.create(user=u, specialization=spec, years_of_experience=exp, consultation_fee=fee, is_available=True)
+        # Doctor profile is automatically created by signal, just update it
+        Doctor.objects.filter(user=u).update(
+            specialization=spec, 
+            years_of_experience=exp, 
+            consultation_fee=fee, 
+            is_available=True
+        )
         doctors.append(u)
     print(f"- {len(doctors)} Doctors created")
 

@@ -8,8 +8,9 @@ import axios from 'axios';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { API_BASE_URL } from '../utils/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
 
 export default function AdminDashboard() {
   const navigate = useNavigate();

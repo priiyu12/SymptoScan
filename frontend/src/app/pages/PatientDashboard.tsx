@@ -5,8 +5,9 @@ import { Activity, Stethoscope, History, LogOut, User, Menu } from 'lucide-react
 import { Badge } from '../components/ui/badge';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../utils/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
 export default function PatientDashboard() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
