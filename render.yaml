@@ -15,9 +15,10 @@ services:
       - key: DATABASE_URL
         value: "postgresql://neondb_owner:npg_2Slr1oPHewgE@ep-fancy-heart-aknlez8c.c-3.us-west-2.aws.neon.tech/neondb?sslmode=require"
       - key: ALLOWED_HOSTS
-        value: ".render.com"
+        value: "*"
       - key: CORS_ALLOWED_ORIGINS
-        value: "https://symptoscan-frontend.onrender.com" # You can update this once frontend is live
+        # FIXED: exact frontend URL (not the wrong generic one)
+        value: "https://symptoscan-frontend-yjxv.onrender.com"
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
@@ -31,10 +32,9 @@ services:
     staticPublishPath: "frontend/dist"
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: symptoscan-backend
-          property: host
+        # FIXED: hardcode the correct full URL with https:// prefix
+        # 'property: host' only gives hostname without protocol, which breaks API calls
+        value: "https://symptoscan-nbo5.onrender.com"
     routes:
       - type: rewrite
         src: "/*"
