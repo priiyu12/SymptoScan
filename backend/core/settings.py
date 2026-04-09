@@ -34,9 +34,13 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-caolz9d-&c(iap*s8ixfmeuc@=kr+l#3@txfu9%&b@mp7%_0an')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', default=True)
-
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
+    'symptoscan-nbo5.onrender.com',
+    'symptoscan-frontend-yjxv.onrender.com',
+    'localhost',
+    '127.0.0.1',
+    '.render.com'
+])
 
 
 # Application definition
@@ -163,7 +167,16 @@ DJOSER = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = env.bool('CORS_ALLOW_ALL_ORIGINS', default=True)
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
+    'https://symptoscan-frontend-yjxv.onrender.com',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
+])
+
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
+    'https://symptoscan-frontend-yjxv.onrender.com',
+    'https://symptoscan-nbo5.onrender.com'
+])
 
 # Razorpay Settings
 RAZORPAY_KEY_ID = env('RAZORPAY_KEY_ID', default='rzp_test_placeholder')
