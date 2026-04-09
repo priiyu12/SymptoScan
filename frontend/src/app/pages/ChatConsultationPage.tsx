@@ -37,7 +37,7 @@ export default function ChatConsultationPage() {
     const fetchMessages = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await axios.get(`http://127.0.0.1:8000/api/consultation/chat/${consultationId}/`, {
+        const res = await axios.get(`${API_BASE_URL}/api/consultation/chat/${consultationId}/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setMessages(res.data || []);

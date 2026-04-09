@@ -65,7 +65,7 @@ export default function AdminDashboard() {
   const fetchUsers = useCallback(async (page: number = 1) => {
     try {
       const token = localStorage.getItem('access_token');
-      const res = await axios.get(`http://127.0.0.1:8000/api/users/all/?page=${page}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/users/all/?page=${page}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(res.data.results || []);
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
   const fetchPayments = useCallback(async (page: number = 1) => {
     try {
       const token = localStorage.getItem('access_token');
-      const res = await axios.get(`http://127.0.0.1:8000/api/consultation/payments/?page=${page}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/consultation/payments/?page=${page}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPayments(res.data.results || []);
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       const token = localStorage.getItem('access_token');
-      await axios.delete(`http://127.0.0.1:8000/api/users/manage/${userId}/`, {
+      await axios.delete(`${API_BASE_URL}/api/users/manage/${userId}/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchUsers(userPage);
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
     if (!editingUser) return;
     try {
       const token = localStorage.getItem('access_token');
-      await axios.put(`http://127.0.0.1:8000/api/users/manage/${editingUser.id}/`, {
+      await axios.put(`${API_BASE_URL}/api/users/manage/${editingUser.id}/`, {
         ...editingUser,
         consultation_fee: editingUser.role === 'Doctor' ? parseFloat(editingUser.consultation_fee || '0') : 0
       }, {
