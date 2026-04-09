@@ -34,13 +34,9 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-caolz9d-&c(iap*s8ixfmeuc@=kr+l#3@txfu9%&b@mp7%_0an')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
-    'symptoscan-nbo5.onrender.com',
-    'symptoscan-frontend-yjxv.onrender.com',
-    'localhost',
-    '127.0.0.1',
-    '.render.com'
-])
+DEBUG = env.bool('DEBUG', default=True)
+
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
