@@ -7,3 +7,4 @@ class Prediction(models.Model):
     predicted_disease = models.CharField(max_length=255)
     confidence = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
+    
