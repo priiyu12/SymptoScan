@@ -11,5 +11,4 @@ model = RandomForestClassifier()
 model.fit(X, y)
 
 joblib.dump(model, "prediction/disease_model.pkl")
-
 print("Model saved successfully")
