@@ -167,7 +167,7 @@ export default function AdminDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
 
-        {/* NEW HEADER */}
+        {/* NEW HEADER*/}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Welcome Back, Admin 👋</h1>
           <p className="text-gray-500 mt-1">

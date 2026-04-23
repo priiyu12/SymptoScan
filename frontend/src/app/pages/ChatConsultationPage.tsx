@@ -272,7 +272,7 @@ export default function ChatConsultationPage() {
           </div>
         </div>
 
-        {/* Clinical Context Sidebar (Desktop) */}
+        {/* Clinical Context Sidebar (Desktop)*/}
         <div className="hidden lg:block w-80 bg-white border-l border-gray-100 overflow-y-auto flex-shrink-0 animate-in fade-in slide-in-from-right-4 duration-500">
           <div className="p-6">
             <h3 className="font-bold text-gray-900 mb-5 flex items-center gap-2">
