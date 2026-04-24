@@ -1,3 +1,6 @@
+// Handles user authentication using JWT.
+// After successful login, user profile is fetched
+// and role-based dashboard navigation is performed.
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
