@@ -1,3 +1,5 @@
+// Core product features explaining the main services
+// offered by the SymptoScan healthcare platform.
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
