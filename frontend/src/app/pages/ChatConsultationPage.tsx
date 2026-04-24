@@ -1,3 +1,5 @@
+// Enhancement: Optimistic UI update so messages appear instantly
+// without waiting for server confirmation.
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/ui/button';
