@@ -1,3 +1,5 @@
+// Added dashboard initialization logic to fetch doctor profile,
+// availability status, and consultation history from backend.
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
