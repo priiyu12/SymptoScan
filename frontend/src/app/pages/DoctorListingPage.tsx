@@ -1,3 +1,5 @@
+// Added logic to fetch active doctors from backend
+// and format their data for the listing UI.
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
