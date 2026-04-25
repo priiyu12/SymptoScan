@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -35,14 +36,14 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/jwt/create/', {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/jwt/create/`, {
         email,
         password
       });
 
       const { access, refresh } = response.data;
 
-      const userRes = await axios.get('http://127.0.0.1:8000/api/auth/users/me/', {
+      const userRes = await axios.get(`${API_BASE_URL}/api/auth/users/me/`, {
         headers: {
           Authorization: `Bearer ${access}`
         }

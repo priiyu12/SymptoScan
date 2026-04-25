@@ -7,6 +7,7 @@ import { Badge } from '../components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 
 export default function DoctorListingPage() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function DoctorListingPage() {
     const fetchDoctors = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await axios.get('http://127.0.0.1:8000/api/users/doctors/', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/doctors/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -60,7 +61,7 @@ export default function DoctorListingPage() {
     try {
       const token = localStorage.getItem('access_token');
       // Create or get existing chatroom with this doctor
-      const res = await axios.post('http://127.0.0.1:8000/api/predict/chatroom/', {
+      const res = await axios.post(`${API_BASE_URL}/api/predict/chatroom/`, {
         doctor_id: doctor.id
       }, {
         headers: { Authorization: `Bearer ${token}` }

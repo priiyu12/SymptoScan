@@ -1,7 +1,9 @@
+import { API_BASE_URL } from '../api';
+
 export default function TestFetch() {
     return <button onClick={() => {
         const token = localStorage.getItem('access_token');
-        fetch('http://127.0.0.1:8000/api/predict/', {
+        fetch(`${API_BASE_URL}/api/predict/`, {
             method: 'POST',
             body: JSON.stringify({ "high_fever": 1 }),
             headers: {

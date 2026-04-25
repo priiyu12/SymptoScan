@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -32,7 +33,7 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      await axios.post('http://127.0.0.1:8000/api/auth/users/', {
+      await axios.post(`${API_BASE_URL}/api/auth/users/`, {
         email: formData.email,
         full_name: formData.name,
         password: formData.password,

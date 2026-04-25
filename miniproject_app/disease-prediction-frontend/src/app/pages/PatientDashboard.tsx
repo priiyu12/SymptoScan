@@ -5,6 +5,7 @@ import { Activity, Stethoscope, History, LogOut, User, Menu } from 'lucide-react
 import { Badge } from '../components/ui/badge';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 
 export default function PatientDashboard() {
   const navigate = useNavigate();
@@ -19,13 +20,13 @@ export default function PatientDashboard() {
         const token = localStorage.getItem('access_token');
 
         // Fetch user info
-        const userRes = await axios.get('http://127.0.0.1:8000/api/auth/users/me/', {
+        const userRes = await axios.get(`${API_BASE_URL}/api/auth/users/me/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserName(userRes.data.full_name || userRes.data.email.split('@')[0]);
 
         // Fetch prediction history
-        const historyRes = await axios.get('http://127.0.0.1:8000/api/predict/history/', {
+        const historyRes = await axios.get(`${API_BASE_URL}/api/predict/history/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPredictions(historyRes.data.history || []);

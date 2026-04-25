@@ -6,6 +6,7 @@ import { Progress } from '../components/ui/progress';
 import { Badge } from '../components/ui/badge';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 import { symptoms as mockSymptoms } from '../data/mockData';
 
 export default function PredictionResultPage() {
@@ -41,7 +42,7 @@ export default function PredictionResultPage() {
           }
         });
 
-        const res = await axios.post('http://127.0.0.1:8000/api/predict/', symptomDict, {
+        const res = await axios.post(`${API_BASE_URL}/api/predict/`, symptomDict, {
           headers: {
             Authorization: `Bearer ${token}`
           }

@@ -6,6 +6,7 @@ import { Badge } from '../components/ui/badge';
 import { useState, useEffect } from 'react';
 import { Switch } from '../components/ui/switch';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 
 export default function DoctorDashboard() {
   const navigate = useNavigate();
@@ -21,19 +22,19 @@ export default function DoctorDashboard() {
         const token = localStorage.getItem('access_token');
 
         // Fetch user info
-        const userRes = await axios.get('http://127.0.0.1:8000/api/auth/users/me/', {
+        const userRes = await axios.get(`${API_BASE_URL}/api/auth/users/me/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserName(userRes.data.full_name || userRes.data.email.split('@')[0]);
 
         // Fetch availability
-        const availRes = await axios.get('http://127.0.0.1:8000/api/users/availability/', {
+        const availRes = await axios.get(`${API_BASE_URL}/api/users/availability/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsAvailable(availRes.data.is_available);
 
         // Fetch rooms
-        const res = await axios.get('http://127.0.0.1:8000/api/predict/doctor-chatrooms/', {
+        const res = await axios.get(`${API_BASE_URL}/api/predict/doctor-chatrooms/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setChatRooms(res.data);
@@ -51,7 +52,7 @@ export default function DoctorDashboard() {
     setIsAvailable(checked);
     try {
       const token = localStorage.getItem('access_token');
-      await axios.post('http://127.0.0.1:8000/api/users/availability/',
+      await axios.post(`${API_BASE_URL}/api/users/availability/`,
         { is_available: checked },
         { headers: { Authorization: `Bearer ${token}` } }
       );

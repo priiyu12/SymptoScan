@@ -5,6 +5,7 @@ import { Activity, Users, Stethoscope, TrendingUp, LogOut, User, Menu, BarChart3
 import { Badge } from '../components/ui/badge';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { Input } from '../components/ui/input';
 
@@ -28,7 +29,7 @@ export default function AdminDashboard() {
   const fetchAdminData = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      const res = await axios.get('http://127.0.0.1:8000/api/users/admin-dashboard/', {
+      const res = await axios.get(`${API_BASE_URL}/api/users/admin-dashboard/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -44,7 +45,7 @@ export default function AdminDashboard() {
       });
 
       // Fetch users
-      const usersRes = await axios.get('http://127.0.0.1:8000/api/users/all/', {
+      const usersRes = await axios.get(`${API_BASE_URL}/api/users/all/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(usersRes.data);
@@ -64,7 +65,7 @@ export default function AdminDashboard() {
 
     try {
       const token = localStorage.getItem('access_token');
-      await axios.delete(`http://127.0.0.1:8000/api/users/manage/${userId}/`, {
+      await axios.delete(`${API_BASE_URL}/api/users/manage/${userId}/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -82,7 +83,7 @@ export default function AdminDashboard() {
 
     try {
       const token = localStorage.getItem('access_token');
-      await axios.put(`http://127.0.0.1:8000/api/users/manage/${editingUser.id}/`, editingUser, {
+      await axios.put(`${API_BASE_URL}/api/users/manage/${editingUser.id}/`, editingUser, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

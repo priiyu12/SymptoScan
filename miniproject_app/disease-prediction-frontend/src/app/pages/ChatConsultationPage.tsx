@@ -7,6 +7,7 @@ import { doctors } from '../data/mockData';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 
 export default function ChatConsultationPage() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function ChatConsultationPage() {
     const fetchMessages = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await axios.get(`http://127.0.0.1:8000/api/predict/messages/${roomId}/`, {
+        const res = await axios.get(`${API_BASE_URL}/api/predict/messages/${roomId}/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setMessages(res.data || []);
@@ -48,7 +49,7 @@ export default function ChatConsultationPage() {
 
     try {
       const token = localStorage.getItem('access_token');
-      await axios.post('http://127.0.0.1:8000/api/predict/send-message/', {
+      await axios.post(`${API_BASE_URL}/api/predict/send-message/`, {
         room_id: roomId,
         content: newMessage
       }, {
