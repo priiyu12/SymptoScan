@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from djoser.serializers import UserCreatePasswordRetypeSerializer
 from .models import Doctor
 
 User = get_user_model()
@@ -18,14 +19,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'full_name', 'role', 'doctor_profile')
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(UserCreatePasswordRetypeSerializer):
     specialization = serializers.CharField(required=False, write_only=True)
     consultation_fee = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, write_only=True)
 
-    class Meta:
+    class Meta(UserCreatePasswordRetypeSerializer.Meta):
         model = User
         fields = ('id', 'email', 'full_name', 'password', 'role', 'specialization', 'consultation_fee')
-        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         # Djoser calls this. The signal will create the Doctor profile.
