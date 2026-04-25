@@ -17,10 +17,14 @@ export default function ChatConsultationPage() {
   const location = useLocation();
   
   // Dynamic Data from Location State
-  const doctor = location.state?.doctor;
   const consultationId = location.state?.consultationId;
   const paymentCompleted = location.state?.paymentCompleted || false;
   const prediction = location.state?.prediction; // Symptoms and Disease from Triage
+  
+  const chatPartner = location.state?.doctor || {
+    name: location.state?.chatPartnerName || location.state?.patientName || 'Patient',
+    specialization: 'Patient'
+  };
   
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -84,7 +88,7 @@ export default function ChatConsultationPage() {
     }
   };
 
-  if (!doctor || (!consultationId && !paymentCompleted)) {
+  if (!consultationId && !paymentCompleted) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
         <Card className="p-8 max-w-md text-center shadow-xl border-0">
@@ -147,12 +151,12 @@ export default function ChatConsultationPage() {
               <div className="flex items-center gap-4">
                 <Avatar className="h-12 w-12 border border-blue-100 shadow-sm">
                   <AvatarFallback className="bg-blue-100 text-[#0066CC] font-bold">
-                    {doctor.name.split(' ').map((n: string) => n[0]).join('')}
+                    {chatPartner.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="font-semibold text-gray-900">{doctor.name}</h2>
-                  <p className="text-xs font-medium text-[#0066CC]">{doctor.specialization}</p>
+                  <h2 className="font-semibold text-gray-900">{chatPartner.name}</h2>
+                  <p className="text-xs font-medium text-[#0066CC]">{chatPartner.specialization}</p>
                 </div>
               </div>
 
