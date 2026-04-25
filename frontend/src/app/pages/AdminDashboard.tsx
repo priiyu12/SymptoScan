@@ -238,6 +238,56 @@ export default function AdminDashboard() {
           </Table>
         </Card>
 
+        {/* Payments History */}
+        <Card className="p-6 mb-8 shadow-md border-0">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Payment History</h2>
+            <Badge className="bg-orange-100 text-orange-800">
+              {paymentMetadata.count} Transactions
+            </Badge>
+          </div>
+
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Transaction ID</TableHead>
+                  <TableHead>Patient</TableHead>
+                  <TableHead>Doctor</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {payments.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center text-gray-500 py-4">
+                      No payments found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  payments.map((payment) => (
+                    <TableRow key={payment.id}>
+                      <TableCell className="font-mono text-xs">{payment.transaction_id || payment.order_id}</TableCell>
+                      <TableCell>{payment.patient}</TableCell>
+                      <TableCell>Dr. {payment.doctor}</TableCell>
+                      <TableCell className="font-medium text-green-600">₹{payment.amount}</TableCell>
+                      <TableCell className="text-sm text-gray-600">{payment.date}</TableCell>
+                      <TableCell>
+                        <Badge className="bg-green-100 text-green-800">
+                          {payment.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+
         {/* Footer */}
         <div className="text-center text-xs text-gray-400 py-6">
           SymptoScan Admin Panel • Secure Analytics Dashboard
