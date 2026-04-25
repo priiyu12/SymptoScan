@@ -27,6 +27,7 @@ export default function ChatConsultationPage() {
   };
   
   const [messages, setMessages] = useState<any[]>([]);
+  const [consultationStatus, setConsultationStatus] = useState<string>('ACTIVE');
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const userFullName = localStorage.getItem('user_full_name') || 'Patient';
@@ -46,7 +47,14 @@ export default function ChatConsultationPage() {
         const res = await axios.get(`${API_BASE_URL}/api/consultation/chat/${consultationId}/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setMessages(res.data || []);
+        
+        // Handle new response format: {"consultation": {...}, "messages": [...]}
+        if (res.data.messages) {
+          setMessages(res.data.messages);
+          setConsultationStatus(res.data.consultation?.status || 'ACTIVE');
+        } else {
+          setMessages(res.data || []);
+        }
       } catch (error) {
         console.error("Failed to fetch messages", error);
       } finally {
@@ -62,7 +70,7 @@ export default function ChatConsultationPage() {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!newMessage.trim() || !consultationId) return;
+    if (!newMessage.trim() || !consultationId || consultationStatus === 'EXPIRED') return;
 
     try {
       const token = localStorage.getItem('access_token');
@@ -105,6 +113,12 @@ export default function ChatConsultationPage() {
       </div>
     );
   }
+
+  const handleRenewConsultation = async () => {
+    // Treat renewal identically to starting a new consultation with this doctor.
+    // We already have a linked flow via DoctorListingPage logic.
+    navigate('/patient/doctors', { state: { autoRenew: true, doctorId: location.state?.doctor?.id } });
+  };
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -219,23 +233,42 @@ export default function ChatConsultationPage() {
 
           {/* Message Input */}
           <div className="bg-white border-t border-gray-100 px-6 py-5 flex-shrink-0">
-            <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-3">
-              <Button type="button" variant="outline" size="icon" className="rounded-xl border-gray-200 bg-gray-50 hover:bg-gray-100">
-                <Paperclip className="h-5 w-5 text-gray-500" />
-              </Button>
-              <Input
-                placeholder="Describe your health concerns..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-1 h-12 bg-gray-50/50 border-gray-200 rounded-xl focus:ring-[#0066CC] transition-all"
-              />
-              <Button
-                type="submit"
-                className="bg-[#0066CC] hover:bg-[#0052A3] h-12 px-6 rounded-xl shadow-lg shadow-blue-100 transition-all active:scale-95"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            </form>
+            {consultationStatus === 'EXPIRED' ? (
+              <Card className="p-4 bg-orange-50 border-orange-200 text-center rounded-xl shadow-sm">
+                <p className="text-orange-800 font-medium mb-3">This consultation has expired (older than 30 days).</p>
+                {userRole === 'patient' && (
+                  <Button 
+                    onClick={handleRenewConsultation}
+                    className="bg-[#0066CC] hover:bg-[#0052A3] text-white px-6 rounded-lg shadow-md"
+                  >
+                    Renew Consultation (₹500)
+                  </Button>
+                )}
+                {userRole === 'doctor' && (
+                  <p className="text-sm text-orange-600">Patient needs to renew the consultation to continue.</p>
+                )}
+              </Card>
+            ) : (
+              <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-3">
+                <Button type="button" variant="outline" size="icon" className="rounded-xl border-gray-200 bg-gray-50 hover:bg-gray-100">
+                  <Paperclip className="h-5 w-5 text-gray-500" />
+                </Button>
+                <Input
+                  placeholder="Describe your health concerns..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  className="flex-1 h-12 bg-gray-50/50 border-gray-200 rounded-xl focus:ring-[#0066CC] transition-all"
+                  disabled={consultationStatus === 'EXPIRED'}
+                />
+                <Button
+                  type="submit"
+                  className="bg-[#0066CC] hover:bg-[#0052A3] h-12 px-6 rounded-xl shadow-lg shadow-blue-100 transition-all active:scale-95"
+                  disabled={consultationStatus === 'EXPIRED' || !newMessage.trim()}
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
+              </form>
+            )}
           </div>
         </div>
 

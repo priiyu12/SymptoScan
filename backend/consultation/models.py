@@ -11,6 +11,8 @@ class Consultation(models.Model):
         ('PENDING', 'Pending'),
         ('PAID', 'Paid'),
         ('ACTIVE', 'Active'),
+        ('EXPIRED', 'Expired'),
+        ('RENEWAL_REQUIRED', 'Renewal Required'),
         ('COMPLETED', 'Completed'),
         ('CANCELLED', 'Cancelled'),
     )
@@ -31,12 +33,24 @@ class Consultation(models.Model):
     # Payment flag
     is_paid = models.BooleanField(default=False)
 
+    # Lifecycle and Renewal
+    expires_at = models.DateTimeField(null=True, blank=True)
+    renewed_from = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='renewals')
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.patient.full_name} -> {self.doctor.full_name} ({self.status})"
+
+    def save(self, *args, **kwargs):
+        from datetime import timedelta
+        from django.utils import timezone
+        if not self.expires_at:
+            # When created, it expires 30 days from now
+            self.expires_at = timezone.now() + timedelta(days=30)
+        super().save(*args, **kwargs)
 
 
 class ChatMessage(models.Model):

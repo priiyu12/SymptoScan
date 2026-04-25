@@ -40,7 +40,8 @@ export default function DoctorDashboard() {
         const res = await axios.get(`${API_BASE_URL}/api/consultation/history/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setChatRooms(res.data.results || res.data || []);
+        const allRooms = res.data.results || res.data || [];
+        setChatRooms(allRooms);
       } catch (error) {
         console.error('Failed to fetch rooms:', error);
       } finally {
@@ -92,8 +93,9 @@ export default function DoctorDashboard() {
     }
   };
 
-  const pendingRequests = chatRooms.filter(c => !c.is_paid);
-  const acceptedPatients = chatRooms.filter(c => c.is_paid && c.status !== 'COMPLETED');
+  const pendingRequests = chatRooms.filter(c => !c.is_paid || c.status === 'PENDING');
+  const activeRequests = chatRooms.filter(c => c.status === 'ACTIVE');
+  const pastRequests = chatRooms.filter(c => c.status === 'EXPIRED' || c.status === 'COMPLETED');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -188,7 +190,7 @@ export default function DoctorDashboard() {
               </div>
             </div>
             <div className="text-3xl font-bold text-gray-900 mb-1">
-              {acceptedPatients.length}
+              {activeRequests.length}
             </div>
             <p className="text-sm text-gray-600">Active Patients</p>
           </Card>
@@ -286,49 +288,95 @@ export default function DoctorDashboard() {
             </div>
           </Card>
 
-          {/* Accepted Patients */}
-          <Card className="p-6 shadow-md border-0">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Active Patients</h2>
-            </div>
+          {/* Active Patients */}
+          <div className="space-y-6">
+            <Card className="p-6 shadow-md border-0 bg-blue-50/30">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Active Patients</h2>
+              </div>
 
-            <div className="space-y-4">
-              {loading ? (
-                <div className="text-center py-4 text-gray-500">Loading your patients...</div>
-              ) : acceptedPatients.map((patient) => (
-                <div
-                  key={patient.id}
-                  className="p-4 rounded-lg bg-blue-50 border border-blue-200"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{patient.patient}</h3>
-                      <p className="text-sm text-gray-600">Symptoms: {patient.prediction?.symptoms?.join(', ') || 'N/A'}</p>
-                    </div>
-                    <Badge className={getStatusColor('Accepted')}>
-                      Active
-                    </Badge>
-                  </div>
-
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => navigate('/doctor/chat', { 
-                      state: { 
-                        consultationId: patient.id, 
-                        chatPartnerName: patient.patient,
-                        prediction: patient.prediction,
-                        patientName: patient.patient
-                      } 
-                    })}
+              <div className="space-y-4">
+                {loading ? (
+                  <div className="text-center py-4 text-gray-500">Loading your patients...</div>
+                ) : activeRequests.length === 0 ? (
+                  <div className="text-center py-4 text-gray-500">No active patients.</div>
+                ) : activeRequests.map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="p-4 rounded-lg bg-white border border-blue-200 shadow-sm hover:border-blue-300 transition-colors"
                   >
-                    Continue Consultation
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </Card>
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{patient.patient}</h3>
+                        <p className="text-sm text-gray-600">Expires: {new Date(patient.expires_at).toLocaleDateString()}</p>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800">
+                        Active
+                      </Badge>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full bg-blue-50 text-blue-700 hover:bg-blue-100 border-0"
+                      onClick={() => navigate('/doctor/chat', { 
+                        state: { 
+                          consultationId: patient.id, 
+                          chatPartnerName: patient.patient,
+                          prediction: patient.prediction,
+                          patientName: patient.patient
+                        } 
+                      })}
+                    >
+                      Continue Consultation
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Past Consultations */}
+            <Card className="p-6 shadow-md border-0">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Past Consultations</h2>
+              </div>
+
+              <div className="space-y-4">
+                {pastRequests.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No past consultations found.</p>
+                ) : (
+                  pastRequests.map((patient: any) => (
+                    <div key={patient.id} className="p-4 border border-gray-100 rounded-lg bg-gray-50">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="font-medium text-gray-800">{patient.patient}</h3>
+                          <p className="text-xs text-gray-500">{new Date(patient.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <Badge className="bg-gray-200 text-gray-600">
+                          {patient.status}
+                        </Badge>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full text-xs h-8"
+                        onClick={() => navigate('/doctor/chat', { 
+                          state: { 
+                            consultationId: patient.id, 
+                            chatPartnerName: patient.patient,
+                            prediction: patient.prediction,
+                            patientName: patient.patient
+                          } 
+                        })}
+                      >
+                        View History
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Card>
+          </div>
         </div>
 
         {/* Schedule & Profile Section */}

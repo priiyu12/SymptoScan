@@ -60,6 +60,29 @@ def create_consultation(request):
     if hasattr(doctor, 'doctor_profile'):
         amount = int(doctor.doctor_profile.consultation_fee)
 
+    from django.utils import timezone
+    now = timezone.now()
+
+    # Check for existing consultation
+    latest_consultation = Consultation.objects.filter(
+        patient=request.user, doctor=doctor
+    ).exclude(status__in=['CANCELLED', 'PENDING']).order_by('-created_at').first()
+
+    if latest_consultation:
+        if latest_consultation.status == 'ACTIVE':
+            if latest_consultation.expires_at and latest_consultation.expires_at > now:
+                # Active and within 30 days -> bypass payment
+                return Response({
+                    "status": "existing",
+                    "consultation_id": latest_consultation.id
+                })
+            else:
+                # Expired -> mark it
+                latest_consultation.status = 'EXPIRED'
+                latest_consultation.save()
+        
+        # If it's expired or completed, we proceed to create a new one linked to the old one
+
     data = {
         "amount": amount * 100,  
         "currency": "INR",
@@ -84,7 +107,8 @@ def create_consultation(request):
         doctor=doctor,
         amount=amount,
         razorpay_order_id=order['id'],
-        status='PENDING'
+        status='PENDING',
+        renewed_from=latest_consultation if latest_consultation else None
     )
 
     return Response({
@@ -137,6 +161,9 @@ def send_message(request):
         
         if not consultation.is_paid:
             return Response({"error": "Payment required for chat"}, status=status.HTTP_403_FORBIDDEN)
+            
+        if consultation.status == 'EXPIRED':
+            return Response({"error": "Consultation has expired. Please renew."}, status=status.HTTP_403_FORBIDDEN)
 
         message = ChatMessage.objects.create(
             consultation=consultation,
@@ -168,10 +195,27 @@ def get_messages(request, consultation_id):
         if not (request.user == consultation.patient or request.user == consultation.doctor or request.user.role == 'admin'):
              return Response({"error": "Access denied"}, status=status.HTTP_403_FORBIDDEN)
 
-        messages = consultation.messages.all().order_by('timestamp')
-        data = []
+        from django.utils import timezone
+        now = timezone.now()
+
+        # 1. Dynamic Expiry Check
+        if consultation.status == 'ACTIVE' and consultation.expires_at and consultation.expires_at <= now:
+            consultation.status = 'EXPIRED'
+            consultation.save()
+
+        # 2. Traverse renewed_from chain backwards to gather complete history
+        chain_ids = []
+        curr = consultation
+        while curr:
+            chain_ids.append(curr.id)
+            curr = curr.renewed_from
+
+        # 3. Fetch all messages in the thread
+        messages = ChatMessage.objects.filter(consultation_id__in=chain_ids).order_by('timestamp')
+        
+        msg_data = []
         for msg in messages:
-            data.append({
+            msg_data.append({
                 "id": msg.id,
                 "sender": msg.sender.full_name,
                 "sender_id": msg.sender.id,
@@ -179,7 +223,19 @@ def get_messages(request, consultation_id):
                 "is_auto_response": msg.is_auto_response,
                 "timestamp": msg.timestamp
             })
-        return Response(data)
+            
+        # 4. Construct response
+        response_data = {
+            "consultation": {
+                "id": consultation.id,
+                "status": consultation.status,
+                "expires_at": consultation.expires_at,
+                "patient_name": consultation.patient.full_name,
+                "doctor_name": consultation.doctor.full_name
+            },
+            "messages": msg_data
+        }
+        return Response(response_data)
     except Consultation.DoesNotExist:
         return Response({"error": "Consultation not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -199,7 +255,15 @@ def get_consultations(request):
     data = []
     consultations_to_serialize = page if page is not None else consultations_qs
     
+    from django.utils import timezone
+    now = timezone.now()
+    
     for c in consultations_to_serialize:
+        # Dynamic expiry check for listing
+        if c.status == 'ACTIVE' and c.expires_at and c.expires_at <= now:
+            c.status = 'EXPIRED'
+            c.save()
+
         latest_prediction = Prediction.objects.filter(user=c.patient).order_by('-created_at').first()
         prediction_data = None
         if latest_prediction:
@@ -220,6 +284,8 @@ def get_consultations(request):
             "is_paid": c.is_paid,
             "amount": float(c.amount),
             "created_at": c.created_at.strftime("%Y-%m-%d %H:%M"),
+            "expires_at": c.expires_at.strftime("%Y-%m-%d %H:%M") if c.expires_at else None,
+            "renewed_from": c.renewed_from_id,
             "prediction": prediction_data
         })
     

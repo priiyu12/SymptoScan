@@ -12,6 +12,8 @@ export default function PatientDashboard() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [predictions, setPredictions] = useState<any[]>([]);
+  const [activeConsultations, setActiveConsultations] = useState<any[]>([]);
+  const [pastConsultations, setPastConsultations] = useState<any[]>([]);
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
   const [healthTip, setHealthTip] = useState('Stay hydrated!');
@@ -44,8 +46,18 @@ export default function PatientDashboard() {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPredictions(historyRes.data.history || []);
+
+        // Fetch consultation history
+        const consultRes = await axios.get(`${API_BASE_URL}/api/consultation/history/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const allConsultations = consultRes.data.results || consultRes.data || [];
+        
+        setActiveConsultations(allConsultations.filter((c: any) => c.status === 'ACTIVE'));
+        setPastConsultations(allConsultations.filter((c: any) => c.status !== 'ACTIVE' && c.status !== 'PENDING'));
+
       } catch (err) {
-        console.error("Failed to fetch prediction history", err);
+        console.error("Failed to fetch dashboard data", err);
       } finally {
         setLoading(false);
       }
@@ -251,6 +263,84 @@ export default function PatientDashboard() {
             )}
           </div>
         </Card>
+
+        {/* Active Consultations */}
+        {activeConsultations.length > 0 && (
+          <Card className="p-6 mt-6 shadow-md border-0 bg-blue-50/50">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">Active Consultations</h2>
+            </div>
+            <div className="space-y-4">
+              {activeConsultations.map((consultation, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 rounded-lg bg-white border border-blue-100 shadow-sm cursor-pointer hover:border-blue-300 transition-colors"
+                  onClick={() => navigate('/patient/chat', { 
+                    state: { 
+                      consultationId: consultation.id, 
+                      doctor: { name: consultation.doctor, specialization: 'Doctor', id: consultation.doctor_id }, 
+                      paymentCompleted: true 
+                    } 
+                  })}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-700">
+                      {consultation.doctor.split(' ').map((n: string) => n[0]).join('')}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Dr. {consultation.doctor}</h3>
+                      <p className="text-sm text-gray-500">Expires: {new Date(consultation.expires_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <Button size="sm" className="bg-[#0066CC]">Open Chat</Button>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* Past Consultations */}
+        {pastConsultations.length > 0 && (
+          <Card className="p-6 mt-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">Past Consultations</h2>
+            </div>
+            <div className="space-y-3">
+              {pastConsultations.map((consultation, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                      {consultation.doctor.split(' ').map((n: string) => n[0]).join('')}
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-800 text-sm">Dr. {consultation.doctor}</h3>
+                      <p className="text-xs text-gray-500">{new Date(consultation.created_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-xs h-8"
+                      onClick={() => navigate('/patient/chat', { 
+                        state: { 
+                          consultationId: consultation.id, 
+                          doctor: { name: consultation.doctor, specialization: 'Doctor', id: consultation.doctor_id }, 
+                          paymentCompleted: true 
+                        } 
+                      })}
+                    >
+                      View History
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Health Tips */}
         <Card className="p-6 mt-6 bg-gradient-to-br from-blue-50 to-green-50 border-0 shadow-md">

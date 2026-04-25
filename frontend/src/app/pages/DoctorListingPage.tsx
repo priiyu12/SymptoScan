@@ -8,12 +8,14 @@ import { Activity, Search, Star, Users, Award, Clock, ArrowLeft, User, LogOut } 
 import { Badge } from '../components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { API_BASE_URL } from '../utils/api';
 
 
 export default function DoctorListingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState<string>('all');
 
@@ -60,6 +62,18 @@ export default function DoctorListingPage() {
     return matchesSearch && matchesSpecialization;
   });
 
+  useEffect(() => {
+    // Auto-renew trigger
+    if (location.state?.autoRenew && location.state?.doctorId && doctors.length > 0) {
+      const targetDoc = doctors.find(d => d.id === location.state.doctorId);
+      if (targetDoc) {
+        // Clear state so we don't loop
+        window.history.replaceState({}, document.title);
+        handleConsultation(targetDoc);
+      }
+    }
+  }, [doctors, location.state]);
+
   const handleConsultation = async (doctor: any) => {
     try {
       const token = localStorage.getItem('access_token');
@@ -69,6 +83,12 @@ export default function DoctorListingPage() {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      if (res.data.status === 'existing') {
+        alert("You already have an active 30-day consultation with this doctor!");
+        navigate('/patient/chat', { state: { consultationId: res.data.consultation_id, doctor, paymentCompleted: true } });
+        return;
+      }
 
       const { consultation_id, razorpay_order_id, amount, currency, key_id, is_simulated } = res.data;
 
