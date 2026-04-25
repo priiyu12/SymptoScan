@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-%j$9^59l@n-po7*6s$^=sp(w4oiqqzq8zx@fgctzlxa&0(*h5*
 
 DEBUG = True  # Turn off only in production!
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -128,6 +128,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3001",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://symptoscan-frontend-yjxv.onrender.com",
 ]
 
 # ✅ Disable this in production!
