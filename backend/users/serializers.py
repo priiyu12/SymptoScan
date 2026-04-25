@@ -27,6 +27,19 @@ class UserCreateSerializer(UserCreatePasswordRetypeSerializer):
         model = User
         fields = ('id', 'email', 'full_name', 'password', 'role', 'specialization', 'consultation_fee')
 
+    def validate(self, attrs):
+        spec = attrs.pop('specialization', None)
+        fee = attrs.pop('consultation_fee', None)
+        
+        attrs = super().validate(attrs)
+        
+        if spec is not None:
+            attrs['specialization'] = spec
+        if fee is not None:
+            attrs['consultation_fee'] = fee
+            
+        return attrs
+
     def create(self, validated_data):
         # Djoser calls this. The signal will create the Doctor profile.
         # We pop the extra fields to pass clean data to create_user
