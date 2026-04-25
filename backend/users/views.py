@@ -1,14 +1,21 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes  # Import DRF decorators for API views and permissions
+from rest_framework.permissions import IsAuthenticated, IsAdminUser # Import permission classes
+
+# Import Response and HTTP status codes
+from rest_framework.response import Response 
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
-from django.contrib.auth import get_user_model
-from .serializers import UserSerializer, DoctorSerializer
+
+from rest_framework.pagination import PageNumberPagination # Pagination class for handling large datasets
+from django.contrib.auth import get_user_model # Get custom User model
+
+from .serializers import UserSerializer, DoctorSerializer # Import serializers for data conversion
+
+# Import models
 from .models import Doctor
 from prediction.models import Prediction
 from consultation.models import Consultation, ChatMessage
-from django.db.models import Sum
+
+from django.db.models import Sum # For aggregation (e.g., total revenue)
 
 User = get_user_model()
 
