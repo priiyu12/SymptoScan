@@ -40,7 +40,7 @@ export default function DoctorDashboard() {
         const res = await axios.get(`${API_BASE_URL}/api/consultation/history/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setChatRooms(res.data);
+        setChatRooms(res.data.results || res.data || []);
       } catch (error) {
         console.error('Failed to fetch rooms:', error);
       } finally {
