@@ -3,7 +3,7 @@
 
 SymptoScan is a smart healthcare web application that helps users predict possible diseases based on selected symptoms using Machine Learning and connect with doctors through paid online consultation.
 
-It combines *AI prediction, **real-time consultation, **secure payments, and **admin analytics* into one platform.
+It combines **AI prediction**, **real-time consultation**, **secure payments**, and **admin analytics** into one platform.
 
 ---
 
