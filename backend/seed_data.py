@@ -34,5 +34,7 @@ def seed():
         User.objects.create_user(p_email, 'Test Patient', 'patient123', role='patient')
         print("Test Patient created.")
 
+
+
 if __name__ == '__main__':
     seed()
